@@ -28,4 +28,6 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-/.idea
+/.idea/**/*.xml
+.idea/codeStyles/Project.xml
+.idea/codeStyles/codeStyleConfig.xml
