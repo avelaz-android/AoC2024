@@ -29,5 +29,6 @@ bin/
 .DS_Store
 
 /.idea/**/*.xml
+/.idea/.gitignore
 .idea/codeStyles/Project.xml
 .idea/codeStyles/codeStyleConfig.xml
