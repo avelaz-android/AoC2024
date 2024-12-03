@@ -1,16 +1,18 @@
 enum class PatternType {
     MUL, DONT, DO
 }
-fun main() {
 
-    val mulRegex = """mul\((\d+),(\d+)\)""".toRegex()
-    val dontRegex = """don't\(\)""".toRegex()
-    val doRegex = """do\(\)""".toRegex()
-    data class Pattern(
-        val type: PatternType,
-        val position: Int,
-        val value: MatchResult
-    )
+val mulRegex = """mul\((\d+),(\d+)\)""".toRegex()
+val dontRegex = """don't\(\)""".toRegex()
+val doRegex = """do\(\)""".toRegex()
+
+data class Pattern(
+    val type: PatternType,
+    val position: Int,
+    val value: MatchResult
+)
+
+fun main() {
 
     fun findAllPatterns(input: String): List<Pattern> = buildList {
         mulRegex.findAll(input).forEach {
@@ -24,7 +26,7 @@ fun main() {
         }
     }.sortedBy { it.position }
 
-     fun sumAllMultiplications(input: String): Int =
+    fun sumAllMultiplications(input: String): Int =
         mulRegex.findAll(input)
             .sumOf { matchResult ->
                 matchResult.destructured.let { (num1, num2) ->
@@ -47,6 +49,7 @@ fun main() {
                         sum += num1.toInt() * num2.toInt()
                     }
                 }
+
                 PatternType.DONT -> sumOn = false
                 PatternType.DO -> sumOn = true
             }
