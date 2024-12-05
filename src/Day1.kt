@@ -35,16 +35,13 @@ fun main() {
         }
     }
 
-
     val testInput = readInput("day1")
 
     val result = part1(testInput)
-    print("result => ")
-    println(result)
+    println("result => $result")
 
     val result2 = part2(testInput)
-    print("result => ")
-    println(result2)
+    print("result => $result2")
 }
 
 class SortedList {
@@ -73,6 +70,7 @@ class SortedList {
                     }
                     return pos
                 }
+
                 elements[mid] < value -> left = mid + 1
                 else -> right = mid - 1
             }
