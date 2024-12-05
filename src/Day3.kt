@@ -60,11 +60,9 @@ fun main() {
     val testInput = readInput("day3")
 
     val result = part1(testInput)
-    print("result => ")
-    println(result)
+    println("result => $result")
 
     val result2 = part2(testInput)
-    print("result => ")
-    println(result2)
+    print("result => $result2")
 }
 
