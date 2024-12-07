@@ -37,11 +37,8 @@ fun main() {
 
     val testInput = readInput("day1")
 
-    val result = part1(testInput)
-    println("result => $result")
-
-    val result2 = part2(testInput)
-    print("result => $result2")
+    println("result => ${part1(testInput)}")
+    print("result => ${part2(testInput)}")
 }
 
 class SortedList {
