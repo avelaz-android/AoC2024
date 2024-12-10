@@ -21,7 +21,7 @@ class LabMap(private val rows: Int, private val cols: Int) {
 
     fun addObstacle(pos: Position) = obstacles.add(pos)
 
-    fun removeObstacle(pos: Position) = obstacles.remove(pos)
+    private fun removeObstacle(pos: Position) = obstacles.remove(pos)
 
     fun setGuard(pos: Position, dir: Char) {
         guard = Guard(pos, dir)
@@ -30,22 +30,64 @@ class LabMap(private val rows: Int, private val cols: Int) {
     private fun isOutOfMap(pos: Position): Boolean =
         pos.row !in 0..<rows || pos.col !in 0..<cols
 
-    fun calculateGuardPath(): Int {
-        visited.add(guard.pos)
+    private fun pathUntilExit(): Set<Position> {
+        val pathPositions = HashSet<Position>()
+        val testGuard = Guard(guard.startPos, guard.startDir)
+        pathPositions.add(testGuard.pos)
 
         while (true) {
-            val nextPos = moves[guard.direction]!!(guard.pos)
+            val nextPos = moves[testGuard.direction]!!(testGuard.pos)
 
             if (isOutOfMap(nextPos) && !obstacles.contains(nextPos)) break
 
             if (isOutOfMap(nextPos) || obstacles.contains(nextPos)) {
-                guard.direction = turns[guard.direction]!!
+                testGuard.direction = turns[testGuard.direction]!!
             } else {
-                guard.pos = nextPos
-                visited.add(nextPos)
+                testGuard.pos = nextPos
+                pathPositions.add(nextPos)
             }
         }
+        return pathPositions
+    }
 
+    private fun willGuardBeFree(): Boolean {
+        val statesSeen = mutableSetOf<Pair<Position, Char>>()
+        val testGuard = Guard(guard.startPos, guard.startDir)
+
+        while (true) {
+            val state = testGuard.pos to testGuard.direction
+            if (!statesSeen.add(state)) return false
+
+            val nextPos = moves[testGuard.direction]!!(testGuard.pos)
+
+            if (isOutOfMap(nextPos) && !obstacles.contains(nextPos)) return true
+
+            if (isOutOfMap(nextPos) || obstacles.contains(nextPos)) {
+                testGuard.direction = turns[testGuard.direction]!!
+            } else {
+                testGuard.pos = nextPos
+            }
+        }
+    }
+
+    fun findLoopPositions(): List<Position> {
+        val loopPositions = mutableListOf<Position>()
+        val guardPath = pathUntilExit()
+
+        for (pos in guardPath) {
+            if (pos == guard.startPos) continue
+
+            addObstacle(pos)
+            if (!willGuardBeFree()) loopPositions.add(pos)
+            removeObstacle(pos)
+        }
+
+        return loopPositions
+    }
+
+    fun getVisitedPositionsCount(): Int {
+        visited.clear()
+        pathUntilExit().let { visited.addAll(it) }
         return visited.size
     }
 }
@@ -53,7 +95,7 @@ class LabMap(private val rows: Int, private val cols: Int) {
 
 fun main() {
 
-    fun part1(input: List<String>): Int {
+    fun parseInput(input: List<String>): LabMap {
         val labMap = LabMap(input.size, input[0].length)
 
         input.forEachIndexed { row, line ->
@@ -66,15 +108,21 @@ fun main() {
             }
         }
 
-        return labMap.calculateGuardPath()
+        return labMap
     }
 
-//    fun part2(input: List<String>): Int {
-//        return 0
-//    }
+    fun part1(input: List<String>): Int {
+        val labMap = parseInput(input)
+        return labMap.getVisitedPositionsCount()
+    }
+
+    fun part2(input: List<String>): Int {
+        val labMap = parseInput(input)
+        return labMap.findLoopPositions().size
+    }
 
     val testInput = readInput("day6")
 
     println("result => ${part1(testInput)}")
-    // print("result => ${part2(testInput)}")
+    print("result => ${part2(testInput)}")
 }
